@@ -1,0 +1,11 @@
+<strong>Polyhedrons</strong>
+
+<ul>
+{% for polyhedron in polyhedrons %}
+	<li><a href="{% url 'model_browser:byline_texture_implementation_view' texture_line_id=texture_line_id polyhedron_id=polyhedron.id  %}"><img src = "/static/model_browser/images/white_polyhedra/{{ polyhedron.get_preview_image_small }}"></a> <br>{{polyhedron.name}}</li>
+{% endfor %}
+</ul>
+
+
+
+
