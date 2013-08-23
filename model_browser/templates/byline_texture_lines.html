@@ -4,7 +4,7 @@
 <ul>
 <strong>Texture Lines</strong>
 {% for line in texture_lines_list %}
-	<li><a href="{% url 'model_browser:byline_polyhedrons_view' texture_line_id=line.id %}">{{line.name}}</a></li>
+	<li><a href="{% url 'model_browser:byline_polyhedrons_view' texture_line_id=line.id %}">{{ line.name }}</a></li>
 {% endfor %}
 </ul>
 

@@ -9,7 +9,7 @@ def urlize(name):
 
 #overwriteExisting = False
 print "Populating database:"
-polyhedrons_dir = "/home/cosmo/Django/playful_geometer_site/model_browser/static/model_browser/images/textured_polyhedra/"
+polyhedrons_dir = "/home/cosmo/Django/playful_geometer_site/model_browser/static/model_browser/images/textured_polyhedrons/"
     
 #column headdings
 

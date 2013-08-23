@@ -12,29 +12,37 @@ def unurlize(name):
     return name.replace("_", " ")
 #TODO:  throw exception if name attributes contain special characters 
 
-def populateDatabase():    
+
+
+
+def populate():    
+    printoutArr = []
+    def printout(aStr):
+        printoutArr.append(aStr)
+    
     #overwriteExisting = False
-    print "Populating database:"
-    polyhedrons_dir = "/home/cosmo/Django/playful_geometer_site/model_browser/static/model_browser/images/textured_polyhedra/"
+    printout("Populating database:")
+    
+    polyhedrons_dir = "/home/cosmo/Django/playful_geometer_site/staticfiles/model_browser/images/textured_polyhedrons/"
         
     #column headdings
     
     polyhedron_list = os.listdir(polyhedrons_dir)
-    print polyhedron_list
+    printout(polyhedron_list)
     polyhedron_list = [i for i in polyhedron_list if os.path.isdir(polyhedrons_dir + i)  ] #excludes non-directory entries
     
     #access each model folder
     for polyhedron_url in polyhedron_list:
         polyhedron_name = unurlize(polyhedron_url)
-        print "polyhedron_name: " + polyhedron_name
+        printout( "polyhedron_name: " + polyhedron_name)
         polyhedron_folder = polyhedrons_dir + polyhedron_url + "/"
         try:
-            this_polyhedron = Polyhedron.objects.get(name=polyhedron_name)
-            print "Found polyhedron:" + polyhedron_name
+            this_polyhedron = Polyhedron.objects.get(id=polyhedron_url)
+            printout("Found polyhedron:" + polyhedron_name)
         except Polyhedron.DoesNotExist:
-            this_polyhedron = Polyhedron.objects.create(name=polyhedron_name, id=polyhedron_url)
+            this_polyhedron = Polyhedron.objects.create( id=polyhedron_url)
             this_polyhedron.save()
-            print ">>>>>Created polyhedron:" + polyhedron_name
+            printout(">>>>>Created polyhedron:" + polyhedron_name)
             
             
                
@@ -43,14 +51,14 @@ def populateDatabase():
         
         for line_url in lines_list:
             line_name = unurlize(line_url)
-            print ">>>Line: " + line_name 
+            printout(">>>Line: " + line_name )
             try:
-                this_line = TextureLine.objects.get(name=line_name)
-                print "Found line:" + line_name
+                this_line = TextureLine.objects.get(id=line_url)
+                printout("Found line:" + line_name)
             except TextureLine.DoesNotExist:
-                this_line = TextureLine.objects.create(name=line_name, id=line_url)
+                this_line = TextureLine.objects.create( id=line_url)
                 this_line.save()
-                print ">>>>>Created line:"+line_name
+                printout(">>>>>Created line:"+line_name)
             
             relative_model_previews_path=  "/"+"/".join([polyhedron_url, line_url])+"/"
             line_folder = polyhedron_folder + line_url + "/"
@@ -64,22 +72,20 @@ def populateDatabase():
                 large_image_name = designs_list[file_ind+1]
                 file_root_name = large_image_name[:-4]
                 polyhedron_design_tup = file_root_name.partition('-')
-                #polyhedronTitle = titlize(polyhedron_design_tup[0])
-                #polyhedronKey = urlize(polyhedronTitle)
                 design_name = titlize(polyhedron_design_tup[2])
                 design_key = urlize(design_name)
                   
                 try:
-                    this_texture = Texture.objects.get(name=design_name)
-                    print "Found texture:" + design_name 
+                    this_texture = Texture.objects.get(id=design_key)
+                    printout("Found texture:" + design_name )
                 except Texture.DoesNotExist:
-                    this_texture = Texture.objects.create(name=design_name, id=design_key, texture_line=this_line)
+                    this_texture = Texture.objects.create(id=design_key, texture_line=this_line)
                     this_texture.save()
-                    print ">>>>>Created texture:" + design_name
+                    printout(">>>>>Created texture:" + design_name)
                 
                 try:
                     this_texture_implementation = TextureImplementation.objects.get(polyhedron_mapped_to=this_polyhedron, texture_mapped_from=this_texture)
-                    print "Found texture implementation:" + polyhedron_name + "->" + design_name 
+                    printout("Found texture implementation:" + polyhedron_name + "->" + design_name )
                 except TextureImplementation.DoesNotExist:
                     this_texture_implementation = TextureImplementation.objects.create(\
                     polyhedron_mapped_to=this_polyhedron, \
@@ -87,7 +93,7 @@ def populateDatabase():
                     preview_small = relative_model_previews_path+small_image_name,\
                     preview_large = relative_model_previews_path+large_image_name)
                     this_texture_implementation.save()
-                    print ">>>>>Created texture implementation:" + polyhedron_name + "->" + design_name
+                    printout(">>>>>Created texture implementation:" + polyhedron_name + "->" + design_name)
    
     prices = {"3D Model Building Kits":\
     {'Star Tetrahedron': 12, 'Small Stellated Dodecahedron':20 ,'Great Rhombihexacron':20,'Great Stellated Dodecahedron':25,'Earth Grid Dome':30},\
@@ -97,12 +103,12 @@ def populateDatabase():
      
     for polyProd, modelPriceRel in prices.iteritems():
         try :
-            this_polyhedron_product = PolyhedronProduct.objects.get(name=polyProd)
+            this_polyhedron_product = PolyhedronProduct.objects.get(urlize(polyProd))
         except PolyhedronProduct.DoesNotExist:
-            this_polyhedron_product = PolyhedronProduct(name=polyProd, id=urlize(polyProd))
+            this_polyhedron_product = PolyhedronProduct(id=urlize(polyProd))
         for modelName, modelPrice in modelPriceRel.iteritems():
             try:
-                this_polyhedron = Polyhedron.objects.get(name=modelName)
+                this_polyhedron = Polyhedron.objects.get(id=urlize(modelName))
                 try:
                     PolyhedronProductMapping.objects.get(polyhedron=this_polyhedron, product=this_polyhedron_product)
                 except PolyhedronProductMapping.DoesNotExist:
@@ -111,9 +117,10 @@ def populateDatabase():
                         polyhedron=this_polyhedron,\
                         price=modelPrice)
                     thisPolyhedronProductMapping.save()
-                print ">>>>>Created product : " + polyProd+ "'s relation to " + modelName
+                printout(">>>>>Created product : " + polyProd+ "'s relation to " + modelName)
                 
             except Polyhedron.DoesNotExist:
-                print "Couldn't find Polyhedron: "+ modelName + "for product line: " + polyProd
+                printout("Couldn't find Polyhedron: "+ modelName + "for product line: " + polyProd)
+    return "\n".join(printoutArr)
 
 

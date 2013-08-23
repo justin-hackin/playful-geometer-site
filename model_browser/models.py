@@ -33,11 +33,14 @@ class PolyhedronProduct(Deactivatable):
     "3D Model Building Kits" as cardstock craftkits, and premade "Ornamental Miniatures"
     """
     id = models.CharField(max_length=max_name_length, primary_key=True)
-    name = models.CharField(max_length=max_name_length, unique=True)
     description = models.CharField(max_length=max_description_length, blank=True)    
     
     def __unicode__(self):
-        return self.name
+        return self.id.replace("_", " ")
+    
+    def name(self):
+        return self.__unicode__()
+    
 
 
 class TextureLine(Deactivatable):
@@ -45,11 +48,14 @@ class TextureLine(Deactivatable):
     A particular style of Textures that cater to a specific target market i.e. photographic, fractal
     """
     id = models.CharField(max_length=max_name_length, primary_key=True)
-    name = models.CharField(max_length=max_name_length, unique=True)
     description = models.CharField(max_length=max_description_length, default="")
         
     def __unicode__(self):
-        return self.name
+        return self.id.replace("_", " ")
+    
+    def name(self):
+        return self.__unicode__()
+    
     def hasModels(self, polyhedron_id):
         Polyhedron.objects.filter(id=polyhedron_id, textures__texture_line__id=self.id).distinct()
        
@@ -60,14 +66,18 @@ class Texture(Deactivatable):
     the TextureImplementation refers to a mapping of the image onto a Polyhedron
     """
     id = models.CharField(max_length=max_name_length, primary_key=True)
-    name = models.CharField(max_length=max_name_length, unique=True)
     description = models.CharField(max_length=max_description_length, default="")
     texture_line = models.ForeignKey(TextureLine)    
     image_link = models.CharField(max_length=max_filename_length, blank=True)
       
     def __unicode__(self):
-        return self.name
+        return self.id.replace("_", " ")
     
+    def name(self):
+        return self.__unicode__()
+
+white_polyhedrons_url = "model_browser/images/white_polyhedrons/"
+
 
 class Polyhedron(Deactivatable):
     """
@@ -75,26 +85,23 @@ class Polyhedron(Deactivatable):
     The Playful Geometer sells many varieties featuring different Textures and PolyhedronProducts
     """
     id = models.CharField(max_length=max_name_length, primary_key=True)
-    name = models.CharField(max_length=max_name_length, unique=True)
     description = models.CharField(max_length=max_description_length, blank=True)
     points = models.IntegerField(default=0) 
     products = models.ManyToManyField(PolyhedronProduct, through='PolyhedronProductMapping')
     textures = models.ManyToManyField(Texture, through='TextureImplementation')  
         
     def __unicode__(self):
-        return self.name
+        return self.id.replace("_", " ")
     
-    def urlName(self):
-        return self.name.replace(' ', '_')
+    def name(self):
+        return self.__unicode__()
     
-    def get_preview_image_small(self):
-        return str(self.name).replace(" ","_").lower() + "_blank.min.png"
+    def url_preview_image_small(self):
+        return white_polyhedrons_url+str(self.name()).replace(" ","_").lower() + "_blank.min.png"
     
-    def get_preview_image_large(self):
-        return str(self.name).replace(" ","_").lower()+"_blank.png"
-    
-    def has_texture_lines(self):
-        return TextureLine.objects.filter(texture__textureimplementation__polyhedron_mapped_to=self.id).distinct()
+    def url_preview_image_large(self):
+        return white_polyhedrons_url+str(self.name()).replace(" ","_").lower()+"_blank.png"
+
 
 class PolyhedronProductMapping(Deactivatable):
     """
@@ -105,7 +112,7 @@ class PolyhedronProductMapping(Deactivatable):
     price = models.FloatField()
 
 
-
+textured_polyhedrons_url = "model_browser/images/textured_polyhedrons/"
 class TextureImplementation(models.Model):
     """
     A cropped Texture to be mapped onto a particular Polyhedron
@@ -116,6 +123,17 @@ class TextureImplementation(models.Model):
     polyhedron_mapped_to = models.ForeignKey(Polyhedron)
     preview_small = models.CharField(max_length=max_filename_length)
     preview_large = models.CharField(max_length=max_filename_length)
+    
+    
+    
+    def url_preview_image_small(self):
+        return textured_polyhedrons_url+str(self.polyhedron_mapped_to.id).replace(" ","_").lower() + "_blank.min.png"
+    
+    def url_preview_image_large(self):
+        return textured_polyhedrons_url+str(self.name).replace(" ","_").lower()+"_blank.png"
+    
+    
+    
     
     #textureImplementationFile = models.CharField(max_length=max_filename_length)
     #in future, a webgl texture implementation mapper would use/need

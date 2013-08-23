@@ -11,11 +11,11 @@ urlpatterns = patterns('',
     #url(r'^$', views.PolyhedronListView.as_view(), name='polyhedron_list_view'),
     url(r'^TextureLines/$', views.ByLineTextureLinesView.as_view(), name='byline_texture_lines_view'),
     url(r'^TextureLines/(?P<texture_line_id>[_\w]+)/$', views.ByLinePolyhedronsView.as_view(), name='byline_polyhedrons_view'),
-    url(r'^TextureLines/(?P<texture_line_id>[_\w]+)/(?P<polyhedron_id>[\w_]+)/$', views.ByLineTextureImplementationView.as_view(), name='byline_texture_implementation_view'),
+    url(r'^TextureLines/(?P<texture_line_id>[_\w]+)/(?P<polyhedron_id>[\w_]+)/$', views.TextureImplementationView.as_view(), name='byline_texture_implementation_view'),
     url(r'^Models/$', views.ByModelPolyhedronsView.as_view(), name='bymodel_polyhedrons_view'),
     url(r'^Models/(?P<polyhedron_id>[_\w]+)/$', views.ByModelTextureLinesView.as_view(), name='bymodel_texture_lines_view'),
-    url(r'^Models/(?P<polyhedron_id>[_\w]+)/(?P<texture_line_id>[\w_]+)/$', views.ByModelTextureImplementationView.as_view(), name='bymodel_texture_implementation_view'),
-    
+    url(r'^Models/(?P<polyhedron_id>[_\w]+)/(?P<texture_line_id>[\w_]+)/$', views.TextureImplementationView.as_view(), name='bymodel_texture_implementation_view'),
+    url(r'^PopulateDatabase/$', views.populate_db, name='populate_database_view'),
     #url(r'^/Textues/')
     #url(r'/TextureLines/(?P<texture_line_url>\d+)', views.PolyhedronListView, name='texture_lines'),
 

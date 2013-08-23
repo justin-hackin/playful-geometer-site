@@ -2,7 +2,7 @@
 
 <ul>
 {% for polyhedron in polyhedrons %}
-	<li><a href="{% url 'model_browser:bymodel_texture_lines_view' polyhedron_id=polyhedron.id %}"><img src = "/static/model_browser/images/white_polyhedra/{{ polyhedron.get_preview_image_small }}"></a> <br>{{polyhedron.name}}</li>
+	<li><a href="{% url 'model_browser:bymodel_texture_lines_view' polyhedron_id=polyhedron.id %}"><img src = "/static/model_browser/images/white_polyhedra/{{ polyhedron.get_preview_image_small }}"></a> <br>{{ polyhedron.name }}</li>
 {% endfor %}
 </ul>
 
