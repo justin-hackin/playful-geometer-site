@@ -10,12 +10,12 @@ MANAGERS = ADMINS
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
-        'NAME': '/home/cosmo/Django/playful_geometer_site/sqlite.db',                      # Or path to database file if using sqlite3.
+        'ENGINE': 'django.db.backends.postgresql_psycopg2', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
+        'NAME': 'playful_geometer_db',                      # Or path to database file if using sqlite3.
         # The following settings are not used with sqlite3:
-        'USER': 'cosmo',
-        'PASSWORD': 'importthis',
-        'HOST': '',                      # Empty for localhost through domain sockets or '127.0.0.1' for localhost through TCP.
+        'USER': 'playful_geometer_user',
+        'PASSWORD': 'cosm888',
+        'HOST': 'LOCALHOST',                      # Empty for localhost through domain sockets or '127.0.0.1' for localhost through TCP.
         'PORT': '',                      # Set to empty string for default.
     }
 }
@@ -61,14 +61,6 @@ MEDIA_URL = ''
 # in apps' "static/" subdirectories and in STATICFILES_DIRS.
 # Example: "/var/www/example.com/static/"
 
-
-# Additional locations of static files
-STATICFILES_DIRS = (
-    "/home/cosmo/Django/playful-geometer-site/staticfiles",
-    # Put strings here, like "/home/html/static" or "C:/www/django/static".
-    # Always use forward slashes, even on Windows.
-    # Don't forget to use absolute paths, not relative paths.
-)
 
 # List of finder classes that know how to find static files in
 # various locations.
@@ -155,7 +147,7 @@ LOGGING = {
 }
 
 # Parse database configuration from $DATABASE_URL
-import dj_database_url
+#import dj_database_url
 #DATABASES['default'] =  dj_database_url.config()
 
 # Honor the 'X-Forwarded-Proto' header for request.is_secure()
@@ -172,4 +164,5 @@ STATIC_URL = '/static/'
 
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'static'),
+    "/home/cosmo/Django/playful_geometer_site/model_browser/",
 )

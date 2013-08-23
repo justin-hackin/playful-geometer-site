@@ -13,17 +13,15 @@ def unurlize(name):
 #TODO:  throw exception if name attributes contain special characters 
 
 
-
-
 def populate():    
     printoutArr = []
     def printout(aStr):
-        printoutArr.append(aStr)
+        print aStr
     
     #overwriteExisting = False
     printout("Populating database:")
     
-    polyhedrons_dir = "/home/cosmo/Django/playful_geometer_site/staticfiles/model_browser/images/textured_polyhedrons/"
+    polyhedrons_dir = "/home/cosmo/Django/playful_geometer_site/model_browser/static/model_browser/images/textured_polyhedrons/"
         
     #column headdings
     
@@ -90,8 +88,7 @@ def populate():
                     this_texture_implementation = TextureImplementation.objects.create(\
                     polyhedron_mapped_to=this_polyhedron, \
                     texture_mapped_from=this_texture,\
-                    preview_small = relative_model_previews_path+small_image_name,\
-                    preview_large = relative_model_previews_path+large_image_name)
+                    preview_small =small_image_name, preview_large = large_image_name)
                     this_texture_implementation.save()
                     printout(">>>>>Created texture implementation:" + polyhedron_name + "->" + design_name)
    
@@ -103,7 +100,7 @@ def populate():
      
     for polyProd, modelPriceRel in prices.iteritems():
         try :
-            this_polyhedron_product = PolyhedronProduct.objects.get(urlize(polyProd))
+            this_polyhedron_product = PolyhedronProduct.objects.get(id=urlize(polyProd))
         except PolyhedronProduct.DoesNotExist:
             this_polyhedron_product = PolyhedronProduct(id=urlize(polyProd))
         for modelName, modelPrice in modelPriceRel.iteritems():
@@ -112,7 +109,7 @@ def populate():
                 try:
                     PolyhedronProductMapping.objects.get(polyhedron=this_polyhedron, product=this_polyhedron_product)
                 except PolyhedronProductMapping.DoesNotExist:
-                    thisPolyhedronProductMapping = PolyhedronProductMapping(\
+                    thisPolyhedronProductMapping = PolyhedronProductMapping.objects.create(\
                         product=this_polyhedron_product, \
                         polyhedron=this_polyhedron,\
                         price=modelPrice)

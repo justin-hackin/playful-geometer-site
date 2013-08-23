@@ -5,7 +5,7 @@ model_browser : represents The Playful Geometer's product line
 from django.db import models
 
 # Create your models here.
-max_name_length = 30
+max_name_length = 50
 max_description_length = 500
 max_filename_length = 200
 
@@ -75,7 +75,7 @@ class Texture(Deactivatable):
     
     def name(self):
         return self.__unicode__()
- 
+
 white_polyhedrons_url = "model_browser/images/white_polyhedrons/"
 
 
@@ -112,7 +112,6 @@ class PolyhedronProductMapping(Deactivatable):
     price = models.FloatField()
 
 
-textured_polyhedrons_url = "model_browser/images/textured_polyhedrons/"
 class TextureImplementation(models.Model):
     """
     A cropped Texture to be mapped onto a particular Polyhedron
@@ -124,16 +123,14 @@ class TextureImplementation(models.Model):
     preview_small = models.CharField(max_length=max_filename_length)
     preview_large = models.CharField(max_length=max_filename_length)
     
-    
-    
+    def get_base_url(self):
+        return "model_browser/images/textured_polyhedrons/"+self.polyhedron_mapped_to.id +"/"+self.texture_mapped_from.texture_line.id+"/"
+
     def url_preview_image_small(self):
-        return textured_polyhedrons_url+str(self.polyhedron_mapped_to.id).replace(" ","_").lower() + "_blank.min.png"
+        return self.get_base_url()+self.preview_small
     
     def url_preview_image_large(self):
-        return textured_polyhedrons_url+str(self.name).replace(" ","_").lower()+"_blank.png"
-    
-    
-    
+        return self.get_base_url()+self.preview_large
     
     #textureImplementationFile = models.CharField(max_length=max_filename_length)
     #in future, a webgl texture implementation mapper would use/need
