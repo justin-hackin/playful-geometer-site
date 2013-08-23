@@ -75,7 +75,7 @@ class Texture(Deactivatable):
     
     def name(self):
         return self.__unicode__()
-
+ 
 white_polyhedrons_url = "model_browser/images/white_polyhedrons/"
 
 

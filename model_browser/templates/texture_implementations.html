@@ -1,7 +1,7 @@
-{% load staticfiles %}
+{% load static from staticfiles %}
 <ul>
 {% for texture_implementation in texture_implementation_list %}
-	<li><img src="/static/model_browser/images/textured_polyhedra{{ texture_implementation.preview_small }}"/><br> {{ texture_implementation.texture_mapped_from.name }} </li>
+	<li><img src="{% static texture_implementation.url_preview_image_small %}"/><br> {{ texture_implementation.texture_mapped_from.name }} </li>
 {% endfor %}
 </ul>
 
