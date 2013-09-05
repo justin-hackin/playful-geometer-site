@@ -6,21 +6,25 @@ app.config(function ($routeProvider) {
   $routeProvider
     .when('/home',
       {
-        templateUrl: 'static/products/app/partials/home.html'
+        templateUrl: 'static/model_browser/app/partials/home.html'
       })
-    .when('/products',
+    .when('/models',
       {
-        controller: 'ProductListController',
-        templateUrl: 'static/products/app/partials/products.html'
+        controller: 'TextureImplementationListController',
+        templateUrl: 'static/model_browser/app/partials/models.html'
       })
-    .when('/products/:productId',
+    .when('/model/:polyhedronSlug/:textureSlug',
       {
-        controller: 'ProductDetailController',
-        templateUrl: 'static/products/app/partials/product.html'
+        controller: 'TextureImplementationDetailController',
+        templateUrl: 'static/model_browser/app/partials/model.html'
       })
     .when('/about',
       {
-        templateUrl: 'static/products/app/partials/about.html'
+        templateUrl: 'static/model_browser/app/partials/about.html'
       })
     .otherwise({ redirectTo: '/home' });
+});
+
+app.filter('encodeURIComponent', function() {
+    return window.encodeURIComponent;
 });

@@ -1,4 +1,23 @@
 # Create your views here.
+
+from django.shortcuts import render
+from rest_framework import viewsets
+from model_browser.models import TextureImplementation
+from model_browser.serializers import TextureImplementationSerializer
+
+def models_gallery(request):
+    context = {}
+    return render(request, 'model_browser/index.html', context)
+
+class TextureImplementationViewSet(viewsets.ModelViewSet):
+    queryset = TextureImplementation.objects.all()
+    serializer_class = TextureImplementationSerializer
+    paginate_by = 10
+    paginate_by_param = 'page_size'
+
+
+
+"""
 from django.views import generic
 from model_browser import populate_database, queries
 from django.template import response
@@ -59,3 +78,4 @@ class TextureImplementationView(IndexView):
 def populate_db(request):
     return HttpResponse(populate_database.populate())
 
+"""

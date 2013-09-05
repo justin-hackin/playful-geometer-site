@@ -1,6 +1,6 @@
 'use strict';
 
-app.controller('ProductListController', function($scope, $location, Product) {
+app.controller('TextureImplementationListController', function($scope, $location, TextureImplementation) {
   var page_size = 6;
 
   Array.prototype.chunk = function(page_size) {
@@ -25,27 +25,27 @@ app.controller('ProductListController', function($scope, $location, Product) {
     return page <= 0 || page > upperlimit;
   }
 
-  Product.query($scope.page, page_size, function(data) {
+  TextureImplementation.query($scope.page, page_size, function(data) {
     upperlimit = data.count / page_size + 1;
     if ($scope.isOutside($scope.prev_page)) {
       $scope.prev_page_url = '#' + $location.url();
     } else {
-      $scope.prev_page_url = '#/products?page=' + $scope.prev_page;
+      $scope.prev_page_url = '#/models?page=' + $scope.prev_page;
     }
     if ($scope.isOutside($scope.next_page)) {
       $scope.next_page_url = '#' + $location.url();
     } else {
-      $scope.next_page_url = '#/products?page=' + $scope.next_page;
+      $scope.next_page_url = '#/models?page=' + $scope.next_page;
     }
-    $scope.product_rows = data.results.chunk(3);
+    $scope.texture_implementation_rows = data.results.chunk(3);
   });
 });
 
-app.controller('ProductDetailController',
-    function($scope, $routeParams, Product) {
-  Product.get($routeParams.productId, function(data) {
-    $scope.product = data;
-  });
+app.controller('TextureImplementationDetailController',
+    function($scope, $routeParams, TextureImplementation) {
+	  TextureImplementation.get($routeParams.polyhedronSlug, $routeParams.textureSlug, function(data) {
+	    $scope.model = data;
+	  });
 });
 
 app.controller('NavbarController', function($scope, $location) {
@@ -53,3 +53,4 @@ app.controller('NavbarController', function($scope, $location) {
     return $location.url().split('?')[0] == path;
   }
 });
+
