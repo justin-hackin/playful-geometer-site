@@ -1,21 +1,17 @@
 import os
 
-def titlize(afilename):
-    return afilename.replace("_", " ").title()
-
 def urlize(name):
-    return name.replace(" ", "_")
-
+    return name.replace("_", " ")
 
 #overwriteExisting = False
 print "Populating database:"
-polyhedrons_dir = "/home/cosmo/Django/playful_geometer_site/model_browser/static/model_browser/images/textured_polyhedrons/"
+polyhedrons_dir = "/home/cosmo/Pictures/0~Spacecrafts~0/0~ModelRenders~0/"
     
 #column headdings
 
 polyhedron_list = os.listdir(polyhedrons_dir)
 print polyhedron_list
-polyhedron_list = [i for i in polyhedron_list if os.path.isdir(polyhedrons_dir + i)  ] #excludes non-directory entries
+polyhedron_list = [i for i in polyhedron_list if os.path.isdir(polyhedrons_dir + i) and not i.startswith("0")  ] #excludes non-directory entries
 
 #access each model folder
 for polyhedron_name in polyhedron_list:

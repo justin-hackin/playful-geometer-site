@@ -9,7 +9,7 @@ urlpatterns = patterns('',
     
     # Examples:
     # url(r'^$', 'playful_geometer_site.views.home', name='home'),
-    url(r'^$', RedirectView.as_view(url=reverse_lazy('model_browser:index'))),
+    #url(r'^$', RedirectView.as_view(url=reverse_lazy('model_browser:index'))),
     url(r'^admin/', include(admin.site.urls)),
     url(r'^model_browser/', include('model_browser.urls', namespace='model_browser') ),
      

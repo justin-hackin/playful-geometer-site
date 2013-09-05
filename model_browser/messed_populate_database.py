@@ -77,8 +77,8 @@ def populate():
                 small_image_name = file_root_name+".min.png"
                 if not os.path.exists(line_folder+small_image_name):
                     printout(">>>>>>>>>>>>>>>>>>>>>>>WARNING:Thumbnail does not exist for "+large_image_name)
-                polyhedron_design_tup = file_root_name.split('-')
-                design_name = titlize(polyhedron_design_tup[1])
+                polyhedron_design_tup = file_root_name.partition('-')
+                design_name = titlize(polyhedron_design_tup[2])
                 
                 
                 texture_args = {'name':design_name, 'texture_line':this_line } 

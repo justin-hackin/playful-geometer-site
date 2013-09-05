@@ -23,7 +23,7 @@ class ByLinePolyhedronsView(IndexView):
   
     def get_context_data(self, **kwargs):
         context = super(ByLinePolyhedronsView, self).get_context_data(**kwargs)
-        context['polyhedrons'] = queries.polyhedrons_in_texture_line(self.kwargs['texture_line_id'])
+        context['polyhedrons'] = queries.polyhedrons_in_texture_line(self.kwargs['texture_line_slug'])
         return context
   
     
@@ -42,8 +42,8 @@ class ByModelTextureLinesView(IndexView):
     template_name = 'bymodel_texture_lines.html'
     def get_context_data(self, **kwargs):
         context = super(ByModelTextureLinesView, self).get_context_data(**kwargs)
-        context['polyhedron_id'] = self.kwargs['polyhedron_id']
-        context['texture_lines_list'] = queries.texture_lines_for_polyhedron(context['polyhedron_id'])
+        context['polyhedron_slug'] = self.kwargs['polyhedron_slug']
+        context['texture_lines_list'] = queries.texture_lines_for_polyhedron(context['polyhedron_slug'])
         return context
     
 #####################
@@ -52,10 +52,10 @@ class TextureImplementationView(IndexView):
     
     def get_context_data(self, **kwargs):
         context = super(TextureImplementationView, self).get_context_data(**kwargs)
-        context['texture_implementation_list'] = queries.texture_implementation(self.kwargs['texture_line_id'], self.kwargs['polyhedron_id'])
+        context['texture_implementation_list'] = queries.texture_implementation(self.kwargs['texture_line_slug'], self.kwargs['polyhedron_slug'])
         return context
-    
+
+# takes too long and times out, may need something like angularjs to show a live-updating of database
 def populate_db(request):
     return HttpResponse(populate_database.populate())
 
-      
