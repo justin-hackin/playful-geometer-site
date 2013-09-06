@@ -1,10 +1,8 @@
-{% load static from staticfiles %}
-<link rel="stylesheet" type="text/css" href="{% static 'model_manager/style.css' %}"/>
 
 <ul>
 <strong>Texture Lines</strong>
 {% for line in texture_lines_list %}
-	<li><a href="{% url 'model_browser:byline_polyhedrons_view' texture_line_id=line.id %}">{{ line.name }}</a></li>
+	<li><a href="{% url 'model_browser:byline_polyhedrons_view' texture_line_slug=line.slug %}">{{ line.name }}</a></li>
 {% endfor %}
 </ul>
 

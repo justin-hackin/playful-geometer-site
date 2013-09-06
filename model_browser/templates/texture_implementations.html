@@ -1,7 +1,7 @@
 {% load static from staticfiles %}
 <ul>
 {% for texture_implementation in texture_implementation_list %}
-	<li><img src="{% static texture_implementation.url_preview_image_small %}"/><br> {{ texture_implementation.texture_mapped_from.name }} </li>
+	<li><a href="{% static texture_implementation.url_preview_image_large %}"><img src="{% static texture_implementation.url_preview_image_small %}"/></a><br> {{ texture_implementation.texture_mapped_from.name }} </li>
 {% endfor %}
 </ul>
 

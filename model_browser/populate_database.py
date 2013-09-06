@@ -5,25 +5,27 @@ from model_browser.models import PolyhedronProduct, Polyhedron, PolyhedronProduc
 def titlize(afilename):
     return afilename.replace("_", " ").title()
 
-def urlize(name):
-    return name.replace(" ", "_")
+def update_model(model, dicti):
+    pass
+#     for key, val in dicti.iteritems():
+#         model.__dict__[key]=val
+#     model.save()
 
-def unurlize(name):
-    return name.replace("_", " ")
-#TODO:  throw exception if name attributes contain special characters 
+def filter_dictionary(dicti,keys):
+    return { k: dicti[k] for k in keys }
 
+    
 
-
-
+printoutArr = []
 def populate():    
-    printoutArr = []
+    
     def printout(aStr):
-        printoutArr.append(aStr)
+        print aStr
     
     #overwriteExisting = False
     printout("Populating database:")
     
-    polyhedrons_dir = "/home/cosmo/Django/playful_geometer_site/staticfiles/model_browser/images/textured_polyhedrons/"
+    polyhedrons_dir = "/home/cosmo/Django/playful_geometer_site/model_browser/static/model_browser/images/textured_polyhedrons/"
         
     #column headdings
     
@@ -32,66 +34,75 @@ def populate():
     polyhedron_list = [i for i in polyhedron_list if os.path.isdir(polyhedrons_dir + i)  ] #excludes non-directory entries
     
     #access each model folder
-    for polyhedron_url in polyhedron_list:
-        polyhedron_name = unurlize(polyhedron_url)
+    for polyhedron_name in polyhedron_list:
         printout( "polyhedron_name: " + polyhedron_name)
-        polyhedron_folder = polyhedrons_dir + polyhedron_url + "/"
+        polyhedron_folder = polyhedrons_dir + polyhedron_name + "/"
+        line_args = {"name":polyhedron_name}
+        filter_keys=["name"]
         try:
-            this_polyhedron = Polyhedron.objects.get(id=polyhedron_url)
-            printout("Found polyhedron:" + polyhedron_name)
+            this_polyhedron = Polyhedron.objects.get(**filter_dictionary(line_args, filter_keys))
+            update_model(this_polyhedron, line_args)
+            printout("Updated polyhedron:" + polyhedron_name)
         except Polyhedron.DoesNotExist:
-            this_polyhedron = Polyhedron.objects.create( id=polyhedron_url)
+            this_polyhedron = Polyhedron.objects.create( name=polyhedron_name)
             this_polyhedron.save()
             printout(">>>>>Created polyhedron:" + polyhedron_name)
             
-            
-               
         lines_list = os.listdir(polyhedron_folder)
-        lines_list = [i for i in lines_list if os.path.isdir(polyhedron_folder + i) and not i.startswith("0")] #excludes non-directory entries or folders starting with 0
+        lines_list = [i for i in lines_list if os.path.isdir(polyhedron_folder + i) ] #excludes non-directory entries or folders starting with 0
         
-        for line_url in lines_list:
-            line_name = unurlize(line_url)
+        for line_name in lines_list:
             printout(">>>Line: " + line_name )
+            line_args = {"name":line_name}
+            filter_keys=["name"]
+            
             try:
-                this_line = TextureLine.objects.get(id=line_url)
-                printout("Found line:" + line_name)
+                this_line = TextureLine.objects.get(**filter_dictionary(line_args, filter_keys))
+                update_model(this_line, line_args)  #may add other args later making this necessary
+                printout("Updated line:" + line_name)
             except TextureLine.DoesNotExist:
-                this_line = TextureLine.objects.create( id=line_url)
+                this_line = TextureLine.objects.create(**line_args)
                 this_line.save()
                 printout(">>>>>Created line:"+line_name)
             
-            relative_model_previews_path=  "/"+"/".join([polyhedron_url, line_url])+"/"
-            line_folder = polyhedron_folder + line_url + "/"
+            line_folder = polyhedron_folder + line_name + "/"
             
             designs_list = os.listdir(line_folder)
-            designs_list.sort() #so large and small images are together in array
             
+            designs_list= [i for i in designs_list if not i.endswith(".min.png") and i.endswith(".png") ] 
             
-            for file_ind in range(0, len(designs_list), 2):
-                small_image_name = designs_list[file_ind]
-                large_image_name = designs_list[file_ind+1]
+            for file_ind in range(0, len(designs_list)):
+                large_image_name = designs_list[file_ind]
                 file_root_name = large_image_name[:-4]
+                small_image_name = file_root_name+".min.png"
+                if not os.path.exists(line_folder+small_image_name):
+                    printout(">>>>>>>>>>>>>>>>>>>>>>>WARNING:Thumbnail does not exist for "+large_image_name)
                 polyhedron_design_tup = file_root_name.partition('-')
                 design_name = titlize(polyhedron_design_tup[2])
-                design_key = urlize(design_name)
-                  
+                
+                
+                texture_args = {'name':design_name, 'texture_line':this_line } 
+                filter_keys=["name"]
                 try:
-                    this_texture = Texture.objects.get(id=design_key)
-                    printout("Found texture:" + design_name )
+                    this_texture = Texture.objects.get(name=design_name)
+                    update_model(this_texture, texture_args)
+                    printout("Updated texture:" + design_name )
                 except Texture.DoesNotExist:
-                    this_texture = Texture.objects.create(id=design_key, texture_line=this_line)
+                    this_texture = Texture.objects.create(**texture_args)
                     this_texture.save()
                     printout(">>>>>Created texture:" + design_name)
                 
+                
+                ti_args = {"polyhedron_mapped_to":this_polyhedron, \
+                    "texture_mapped_from":this_texture,\
+                    "preview_small" :small_image_name, "preview_large" : large_image_name}
+                filter_keys = ["polyhedron_mapped_to","texture_mapped_from"]
                 try:
-                    this_texture_implementation = TextureImplementation.objects.get(polyhedron_mapped_to=this_polyhedron, texture_mapped_from=this_texture)
-                    printout("Found texture implementation:" + polyhedron_name + "->" + design_name )
+                    this_texture_implementation = TextureImplementation.objects.get(**filter_dictionary(ti_args, filter_keys))
+                    update_model(this_texture_implementation, ti_args)
+                    printout("Updated texture implementation:" + polyhedron_name + "->" + design_name )
                 except TextureImplementation.DoesNotExist:
-                    this_texture_implementation = TextureImplementation.objects.create(\
-                    polyhedron_mapped_to=this_polyhedron, \
-                    texture_mapped_from=this_texture,\
-                    preview_small = relative_model_previews_path+small_image_name,\
-                    preview_large = relative_model_previews_path+large_image_name)
+                    this_texture_implementation = TextureImplementation.objects.create(**ti_args)
                     this_texture_implementation.save()
                     printout(">>>>>Created texture implementation:" + polyhedron_name + "->" + design_name)
    
@@ -102,25 +113,41 @@ def populate():
     }            
      
     for polyProd, modelPriceRel in prices.iteritems():
+        prod_args = {"name":polyProd}
+        filter_keys= ["name"]
         try :
-            this_polyhedron_product = PolyhedronProduct.objects.get(urlize(polyProd))
+            this_polyhedron_product = PolyhedronProduct.objects.get(**filter_dictionary(prod_args, filter_keys))
+            update_model(this_polyhedron_product, prod_args)
+            printout("Updated product: " + polyProd )
+
         except PolyhedronProduct.DoesNotExist:
-            this_polyhedron_product = PolyhedronProduct(id=urlize(polyProd))
+            this_polyhedron_product = PolyhedronProduct.objects.create(**prod_args)
+            this_polyhedron_product.save()
+            
         for modelName, modelPrice in modelPriceRel.iteritems():
+            
+            
             try:
-                this_polyhedron = Polyhedron.objects.get(id=urlize(modelName))
+                this_polyhedron = Polyhedron.objects.get(name=modelName)
+                prod_rel_args={"product":this_polyhedron_product, \
+                        "polyhedron":this_polyhedron,\
+                        "price":modelPrice}
+                filter_keys = ["product", "polyhedron"] 
                 try:
-                    PolyhedronProductMapping.objects.get(polyhedron=this_polyhedron, product=this_polyhedron_product)
+                    thisPolyhedronProductMapping = PolyhedronProductMapping.objects.get(**filter_dictionary(prod_rel_args, filter_keys))
+                    update_model(thisPolyhedronProductMapping, prod_rel_args)
+                    printout(">>>>>Updated product : " + polyProd+ "'s relation to " + modelName)   
+                    
                 except PolyhedronProductMapping.DoesNotExist:
-                    thisPolyhedronProductMapping = PolyhedronProductMapping(\
-                        product=this_polyhedron_product, \
-                        polyhedron=this_polyhedron,\
-                        price=modelPrice)
+                    thisPolyhedronProductMapping = PolyhedronProductMapping.objects.create(**prod_rel_args)
                     thisPolyhedronProductMapping.save()
-                printout(">>>>>Created product : " + polyProd+ "'s relation to " + modelName)
+                    printout(">>>>>Created product : " + polyProd+ "'s relation to " + modelName)
                 
             except Polyhedron.DoesNotExist:
                 printout("Couldn't find Polyhedron: "+ modelName + "for product line: " + polyProd)
     return "\n".join(printoutArr)
 
 
+
+if __name__ == "__main__":
+    populate()
