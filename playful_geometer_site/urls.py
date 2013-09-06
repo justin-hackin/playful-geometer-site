@@ -5,7 +5,10 @@ from django.contrib import admin
 admin.autodiscover()
 
 router = DefaultRouter()
-router.register(r'models', views.TextureImplementationViewSet)
+router.register(r'texture_lines', views.TextureLineViewSet)
+router.register(r'texture_implementations', views.TextureImplementationViewSet)
+router.register(r'polyhedrons', views.PolyhedronViewSet )
+
 
 # Uncomment the next two lines to enable the admin:
 # from django.contrib import admin
@@ -14,7 +17,6 @@ router.register(r'models', views.TextureImplementationViewSet)
 urlpatterns = patterns('',
     # Examples:
     url(r'^$', views.models_gallery, name='models_gallery'),
-
     url(r'^api/', include(router.urls)),
     url(r'^auth/', include('rest_framework.urls', namespace='rest_framework')),
 

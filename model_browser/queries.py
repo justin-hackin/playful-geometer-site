@@ -13,10 +13,15 @@ def polyhedrons_in_texture_line(texture_line_slug):
     return Polyhedron.objects.filter(textures__texture_line__slug=texture_line_slug, \
                                      is_active=True).distinct()
 
-def texture_implementation(texture_line_slug, polyhedron_slug):
+def texture_implementations(texture_line_slug, polyhedron_slug):
     """Assumes requested texture_line and polyhedron are active""" 
     return TextureImplementation.objects.filter(\
             texture_mapped_from__texture_line__slug=texture_line_slug, 
             polyhedron_mapped_to__slug=polyhedron_slug, \
             is_active=True)
     
+def all_texture_implementations():
+    return TextureImplementation.objects.filter(is_active=True)
+
+def texture_implementations_in_texture(texture_slug):
+    return TextureImplementation.objects.filter(is_active=True, texture_mapped_from__slug=texture_slug)

@@ -19,7 +19,7 @@ body {
   text-align: center;
 }
 
-.product-cell {
+.model-cell {
   margin-bottom: 30px;
 }
 
@@ -29,3 +29,18 @@ body {
   margin-top: 30px;
   padding-top: 19px;
 }
+
+.boxy{
+	display: inline-table;
+	width:20%;
+	height:700px;
+} 
+
+.centered-text{text-align:center}
+
+
+img.centered {
+    display: block;
+    margin-left: auto;
+    margin-right: auto; }
+

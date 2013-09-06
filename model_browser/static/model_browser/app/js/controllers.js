@@ -1,52 +1,54 @@
 'use strict';
 
-app.controller('TextureImplementationListController', function($scope, $location, TextureImplementation) {
-  var page_size = 6;
+app.controller('TextureImplementationListController', function($scope, $location, DataFetcher) {
+  var polyhedron_slug = $location.search().polyhedron_slug;
+  var texture_line_slug = $location.search().texture_line_slug;
+  var texture_slug = $location.search().texture_slug;
+  if (typeof texture_slug != 'undefined'){
+  	DataFetcher.ti_in_texture(texture_slug, 
+	  	function(data) {    
+	    $scope.texture_implementation_list = data;
+	    $scope.headding = "Texture: "+data[0].texture ;
+	  });
+  }else{  
+	  DataFetcher.ti_in_polyhedron_tline(polyhedron_slug, texture_line_slug, 
+	  	function(data) {    
+	    $scope.texture_implementation_list = data;
+	    $scope.headding = "Model: "+data[0].polyhedron;
+	  });
+	}
+});
 
-  Array.prototype.chunk = function(page_size) {
-    var R = [];
-    for (var i = 0; i < this.length; i += page_size)
-      R.push(this.slice(i, i + page_size));
-    return R;
-  }
+app.controller('PolyhedronListController', function($scope, $location, DataFetcher) {
+  var texture_line_slug = $location.search().texture_line_slug;
+    
+  DataFetcher.polyhedrons_in_texture_line(texture_line_slug, 
+  	function(data) {    
+    $scope.polyhedron_list = data;
+    $scope.texture_line_slug = texture_line_slug ;
+  });
+});
 
-  var page = $location.search().page;
-  if (page) {
-    $scope.page = page;
-  } else {
-    $scope.page = 1;
-  }
-
-  $scope.prev_page = $scope.page - 1;
-  $scope.next_page = parseInt($scope.page) + 1;
-
-  var upperlimit = 0;
-  $scope.isOutside = function(page) {
-    return page <= 0 || page > upperlimit;
-  }
-
-  TextureImplementation.query($scope.page, page_size, function(data) {
-    upperlimit = data.count / page_size + 1;
-    if ($scope.isOutside($scope.prev_page)) {
-      $scope.prev_page_url = '#' + $location.url();
-    } else {
-      $scope.prev_page_url = '#/models?page=' + $scope.prev_page;
-    }
-    if ($scope.isOutside($scope.next_page)) {
-      $scope.next_page_url = '#' + $location.url();
-    } else {
-      $scope.next_page_url = '#/models?page=' + $scope.next_page;
-    }
-    $scope.texture_implementation_rows = data.results.chunk(3);
+app.controller('TextureLineListController', function($scope, $location, DataFetcher) {
+  var polyhedron_slug = $location.search().polyhedron_slug;
+    
+  DataFetcher.texture_lines_for_polyhedron(polyhedron_slug, 
+  	function(data) {    
+    $scope.texture_line_list = data;
+    $scope.polyhedron_slug = polyhedron_slug;
+    
   });
 });
 
 app.controller('TextureImplementationDetailController',
-    function($scope, $routeParams, TextureImplementation) {
-	  TextureImplementation.get($routeParams.polyhedronSlug, $routeParams.textureSlug, function(data) {
+    function($scope, $location, DataFetcher) {
+    	var polyhedron_slug = $location.search().polyhedron_slug;
+  		var texture_slug = $location.search().texture_slug;
+    	DataFetcher.ti_details($routeParams.polyhedronSlug, $routeParams.textureSlug, function(data) {
 	    $scope.model = data;
 	  });
 });
+
 
 app.controller('NavbarController', function($scope, $location) {
   $scope.getActive = function(path) {

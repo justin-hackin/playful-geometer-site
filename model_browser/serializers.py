@@ -3,10 +3,9 @@ from model_browser.models import TextureImplementation, Polyhedron, Texture, Tex
 
 
 class TextureLineSerializer(serializers.ModelSerializer):
-    
     class Meta:
         model = TextureLine
-        fields = ('name', 'description')
+        fields = ('name', 'slug', 'description')
 
 
 class PolyhedronSerializer(serializers.ModelSerializer):
@@ -15,7 +14,7 @@ class PolyhedronSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Polyhedron
-        fields = ('name', 'description', 'url_preview_image_small', 'url_preview_image_large')
+        fields = ('name', 'slug', 'description', 'url_preview_image_small', 'url_preview_image_large')
 
 
 class TextureImplementationSerializer(serializers.ModelSerializer):
@@ -24,12 +23,11 @@ class TextureImplementationSerializer(serializers.ModelSerializer):
     texture = serializers.Field(source='texture_mapped_from.name')
     texture_slug = serializers.Field(source='texture_mapped_from.slug')
     texture_line = serializers.Field(source='texture_mapped_from.texture_line.name')
-    
+    texture_line_slug = serializers.Field(source='texture_mapped_from.texture_line.slug')
     class Meta:
         model = TextureImplementation
-        fields = ('polyhedron', 'polyhedron_slug', 'texture', 'texture_slug','texture_line', 'preview_small', 'preview_large')
-
-
+        fields = ['polyhedron', 'polyhedron_slug', 'texture', 'texture_slug','texture_line', 'texture_line_slug', 'preview_small', 'preview_large',]
+        
 
 
         

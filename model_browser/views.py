@@ -1,81 +1,60 @@
 # Create your views here.
 
 from django.shortcuts import render
-from rest_framework import viewsets
-from model_browser.models import TextureImplementation
-from model_browser.serializers import TextureImplementationSerializer
+from rest_framework import viewsets, generics, filters
+from model_browser.models import TextureImplementation, TextureLine, Polyhedron
+from model_browser.serializers import TextureImplementationSerializer, TextureLineSerializer,\
+    PolyhedronSerializer
+import queries
 
 def models_gallery(request):
     context = {}
     return render(request, 'model_browser/index.html', context)
 
 class TextureImplementationViewSet(viewsets.ModelViewSet):
-    queryset = TextureImplementation.objects.all()
     serializer_class = TextureImplementationSerializer
-    paginate_by = 10
-    paginate_by_param = 'page_size'
-
-
-
-"""
-from django.views import generic
-from model_browser import populate_database, queries
-from django.template import response
-from django.http.response import HttpResponse
-
-
-class IndexView(generic.TemplateView):
-    template_name = 'index.html'
-    def get_context_data(self, **kwargs):
-        context = super(IndexView, self).get_context_data(**kwargs)
-        return context
-
-class ByLineTextureLinesView(IndexView):
-    template_name = 'byline_texture_lines.html'
-    def get_context_data(self, **kwargs):
-        context = super(ByLineTextureLinesView, self).get_context_data(**kwargs)
-        context['texture_lines_list'] = queries.all_texture_lines()
-        return context
-    
-class ByLinePolyhedronsView(IndexView):
-    template_name = "byline_polyhedrons.html"
-  
-    def get_context_data(self, **kwargs):
-        context = super(ByLinePolyhedronsView, self).get_context_data(**kwargs)
-        context['polyhedrons'] = queries.polyhedrons_in_texture_line(self.kwargs['texture_line_slug'])
-        return context
-  
-    
-#################################
-
-class ByModelPolyhedronsView(IndexView):
-    template_name = "bymodel_polyhedrons.html"
-  
-    def get_context_data(self, **kwargs):
-        context = super(ByModelPolyhedronsView, self).get_context_data(**kwargs)
+    queryset = queries.all_texture_implementations()
+       
+    def get_queryset(self):
+        """
+        Optionally restricts the returned purchases to a given user,
+        by filtering against a `username` query parameter in the URL.
+        """
+        polyhedron_slug = self.request.QUERY_PARAMS.get('polyhedron_slug', None)
+        texture_line_slug = self.request.QUERY_PARAMS.get('texture_line_slug', None)
+        texture_slug =  self.request.QUERY_PARAMS.get('texture_slug', None)
         
-        context['polyhedrons'] = queries.all_polyhedrons()
-        return context
+        if texture_slug != None:
+            return queries.texture_implementations_in_texture(texture_slug)
+        elif polyhedron_slug!=None  and texture_line_slug!=None:
+            return queries.texture_implementations(texture_line_slug, polyhedron_slug)
+        else:  
+            return self.queryset
+        #TODO: cover case where only one of 2 parameters supplied
 
-class ByModelTextureLinesView(IndexView):
-    template_name = 'bymodel_texture_lines.html'
-    def get_context_data(self, **kwargs):
-        context = super(ByModelTextureLinesView, self).get_context_data(**kwargs)
-        context['polyhedron_slug'] = self.kwargs['polyhedron_slug']
-        context['texture_lines_list'] = queries.texture_lines_for_polyhedron(context['polyhedron_slug'])
-        return context
+
+
+
+class TextureLineViewSet(viewsets.ModelViewSet):
+    serializer_class = TextureLineSerializer
+    queryset = queries.all_texture_lines()
     
-#####################
-class TextureImplementationView(IndexView):
-    template_name = "texture_implementations.html"
-    
-    def get_context_data(self, **kwargs):
-        context = super(TextureImplementationView, self).get_context_data(**kwargs)
-        context['texture_implementation_list'] = queries.texture_implementation(self.kwargs['texture_line_slug'], self.kwargs['polyhedron_slug'])
-        return context
+    def get_queryset(self):
+        polyhedron_slug = self.request.QUERY_PARAMS.get('polyhedron_slug', None)
+        if polyhedron_slug:
+            return queries.texture_lines_for_polyhedron(polyhedron_slug)
+        else:
+            return self.queryset
 
-# takes too long and times out, may need something like angularjs to show a live-updating of database
-def populate_db(request):
-    return HttpResponse(populate_database.populate())
+class PolyhedronViewSet(viewsets.ModelViewSet):
+    serializer_class = PolyhedronSerializer
+    queryset = queries.all_polyhedrons()
+    def get_queryset(self):
+        texture_line_slug = self.request.QUERY_PARAMS.get('texture_line_slug', None)
+        
+        if texture_line_slug:
+            return queries.polyhedrons_in_texture_line(texture_line_slug)
+        else :
+            return self.queryset
+        
 
-"""

@@ -1,19 +1,40 @@
 'use strict';
-
-app.factory('TextureImplementation', function($http) {
-
-  function getUrl(id ) {
-    id = (typeof id !== 'undefined') ? id : '';
-    return 'http://127.0.0.1:8000/api/models/' + id + '?format=json';
-  }
-
+var thisAPI ='http://127.0.0.1:8000/api/';
+app.factory('DataFetcher', function($http) {
+  
   return {
-    get: function(id, callback) {
-      return $http.get(getUrl(id)).success(callback);
+        
+    ti_in_polyhedron_tline: function(polyhedron_slug, texture_line_slug, callback){
+    	
+    	var thisURL = thisAPI+'texture_implementations/?format=json';
+    	if (typeof polyhedron_slug != 'undefined' && typeof texture_line_slug != 'undefined'){
+    		thisURL+= '&polyhedron_slug='+polyhedron_slug+'&texture_line_slug='+texture_line_slug;  	}
+    	
+    	return $http.get(thisURL).success(callback);
     },
-    query: function(page, page_size, callback) {
-      return $http.get(getUrl() + '&page_size=' + page_size + '&page=' + page).success(callback);
-    }
     
+    ti_in_texture: function(texture_slug, callback){
+    	
+    	var thisURL = thisAPI+'texture_implementations/?format=json';
+    	if (typeof texture_slug != 'undefined'){
+    		thisURL+= '&texture_slug='+texture_slug ;}
+    	
+    	return $http.get(thisURL).success(callback);
+    },
+    
+    polyhedrons_in_texture_line: function(texture_line_slug, callback){
+    	var thisURL = thisAPI+'polyhedrons/?format=json';
+    	if (typeof texture_line_slug != 'undefined') {
+    		thisURL+= '&texture_line_slug='+texture_line_slug; }	
+    	return $http.get(thisURL).success(callback);
+    },
+    
+    texture_lines_for_polyhedron: function(polyhedron_slug,  callback){
+    	var thisURL = thisAPI+'texture_lines/?format=json';
+    	if (typeof polyhedron_slug != 'undefined') {
+    		thisURL+='&polyhedron_slug='+polyhedron_slug; }	
+    	return $http.get(thisURL).success(callback);
+    },
+        
   };
 });

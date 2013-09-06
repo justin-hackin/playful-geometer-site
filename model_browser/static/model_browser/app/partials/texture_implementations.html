@@ -1,0 +1,13 @@
+<div >
+	<h3>{{headding}}</h3>
+	<div class="boxy" ng-repeat="model in texture_implementation_list">
+		<div class="thumbnail">
+			<a class="gallery"  colorbox="{transition:'fade', opacity:'8.5', visibility:'visible'}" id="preview-{{model.polyhedron_slug}}-{{model.texture_slug}}" href="static/model_browser/images/textured_polyhedrons/{{model.polyhedron | encodeURIComponent}}/{{model.texture_line | encodeURIComponent}}/{{model.preview_large}}"> <img class="centered" ng-src="static/model_browser/images/textured_polyhedrons/{{model.polyhedron | encodeURIComponent}}/{{model.texture_line | encodeURIComponent}}/{{model.preview_small}}"/> </a>
+			<div class="caption centered-text">
+				<p >{{model.texture}}</p>
+				<p>	<a href="#/texture-implementations?texture_slug={{model.texture_slug}}" class="btn btn-small btn-primary">See all shapes with this texture</a></p>
+			</div>
+		</div>
+	</div>
+	<colorbox  galleryc="gallery"></colorbox>
+</div>
