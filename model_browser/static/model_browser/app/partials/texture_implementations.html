@@ -1,0 +1,13 @@
+<div >
+	<h3>{{headding}}</h3>
+	<div class="col-lg-3 col-md-4 col-xs-12 model-cell" ng-repeat="model in texture_implementation_list">
+		<div class="thumbnail">
+			<a class="gallery"  colorbox="{transition:'fade'}" id="preview-{{model.polyhedron_slug}}-{{model.texture_slug}}" href="http://playful_geometer_site.s3.amazonaws.com/model_browser/images/textured_polyhedrons/{{model.polyhedron | encodeURIComponent}}/{{model.texture_line | encodeURIComponent}}/{{model.preview_large}}"> <img class="centered" ng-src="http://playful_geometer_site.s3.amazonaws.com/model_browser/images/textured_polyhedrons/{{model.polyhedron | encodeURIComponent}}/{{model.texture_line | encodeURIComponent}}/{{model.preview_small}}"/> </a>
+			<div class="caption centered-text">
+				<p >{{model.texture}}</p>
+				<p>	<a href="#/texture-implementations?texture_slug={{model.texture_slug}}" class="btn btn-small btn-primary btn-block">Matching shapes</a></p>
+			</div>
+		</div>
+	</div>
+	<colorbox  galleryc="gallery"></colorbox>
+</div>

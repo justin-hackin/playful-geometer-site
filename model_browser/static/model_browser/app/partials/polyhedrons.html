@@ -1,0 +1,10 @@
+<div class="col-md-2 model-cell" ng-repeat="polyhedron in polyhedron_list">
+    <div class="thumbnail">
+    	<img class="centered" ng-src="http://playful_geometer_site.s3.amazonaws.com/{{polyhedron.url_preview_image_small}}"/>
+    	<div class="caption centered-text">
+    		<h4 style="height:60px">{{polyhedron.name}}</h4>
+        	<p><a href="#/texture-lines?polyhedron_slug={{polyhedron.slug}}" class="btn btn-small btn-primary">See styles</a></p>
+    	</div>
+    </div>
+</div>
+

@@ -1,0 +1,548 @@
+<!doctype html>
+<html lang="en">
+<head>
+	{% load staticfiles %}
+	<title>The Playful Geometer's 3D model browser experiment</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+	
+	<link href="http://netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet" type="text/css">
+	<link href="{% static "model_browser/3d/css/base.css" %}" rel="stylesheet" type="text/css">
+	<link href="{% static "model_browser/3d/css/info.css" %}" rel="stylesheet" type="text/css">
+	<link href="{% static "model_browser/3d/css/jquery-ui.css" %}" rel="stylesheet" type="text/css">
+	<link href="{% static "model_browser/3d/css/jquery.ui.theme.css" %}" rel="stylesheet" type="text/css">
+	<link href="{% static "model_browser/3d/css/jquery.selectBoxIt.css" %}" rel="stylesheet" type="text/css">
+</head>
+<body>
+  
+<script src="{% static "model_browser/3d/js/Three.js" %}"></script> 
+<script src="{% static "model_browser/3d/js/Detector.js" %}" type="text/javascript"></script>
+<script src="{% static "model_browser/3d/js/OrbitControls.js" %}" type="text/javascript"></script>
+<script src="{% static "model_browser/3d/js/THREEx.KeyboardState.js" %}" type="text/javascript"></script>
+<script src="{% static "model_browser/3d/js/THREEx.WindowResize.js" %}" type="text/javascript"></script>
+<script src="{% static "model_browser/3d/js/THREEx.FullScreen.js" %}" type="text/javascript"></script>
+<script src="{% static "model_browser/3d/js/jquery-1.9.1.js" %}" type="text/javascript"></script>
+<script src="{% static "model_browser/3d/js/jquery-ui.js" %}" type="text/javascript"></script>
+<script src="{% static "model_browser/3d/js/Tween.js" %}"type="text/javascript"></script>
+<script src="{% static "model_browser/3d/js/siggenerator.js" %}" type="text/javascript"></script>
+<script src="{% static "model_browser/3d/js/jquery.selectBoxIt.min.js" %}" type="text/javascript"></script>
+ 
+<div id="toolbar" class="infront ui-toolbar ui-widget-header ui-corner-none"><div class="barTitle">The Playful Geometer's 3D Model Browser Experiment</div></div>
+<div id="infoButton"></div>
+
+<div id="infoBox" title="What's this ?">
+
+	<p>The Playful Geometer presents our newest innovation in web development, an environment where you can explore all the shapes and textures that we have to offer.</p>  
+
+	<p>To navigate the shapes, use the upper arrows to change between textures and the lower ones to change between shapes.  You can also select shape and texture from the menu at the bottom. </p>
+
+	<p>Please be sure to check out our products associated with each item using the icons at the top.  We'd love to have you help us manifest these forms into your space !</p>
+	 
+</div>
+
+	<div class="button-group-container">
+		<div class="buttonGroup bgLeft infront">
+			<button id="prevPolyhedron" class="prevPolyhedron buttonset-left infront ui-button ui-widget ui-state-default ui-corner-tl" role="button" aria-disabled="false" title="nextModel">
+				<span class=" ui-button-icon-primary ui-icon ui-icon-circle-triangle-w"></span>
+			</button><!--
+		 --><select id="polyhedronChoices" class="buttonset-mid"></select><!--
+		--><button id="nextPolyhedron" class="nextPolyhedron buttonset-right infront ui-button ui-widget ui-state-default ui-corner-tr" role="button" aria-disabled="false" title="nextModel">
+				<span class=" ui-button-icon-primary ui-icon ui-icon-circle-triangle-e"></span></button>
+		</div>
+
+		<div class="buttonGroup bgRight infront"><!--
+			--><button id="prevTexture" class="prevTexture infront buttonset-left infront ui-button ui-widget ui-state-default ui-button-icon-primary ui-corner-tl" role="button" aria-disabled="false">
+				<span class=" ui-button-icon-primary ui-icon ui-icon-seek-prev"></span></button><!--
+			--><select id="textureChoices" class="buttonset-mid"></select><!--
+			  --><button id="nextTexture" class="nextTexture buttonset-right infront ui-button ui-widget ui-state-default ui-corner-tr" role="button" aria-disabled="false" title="nextTexture"><span class=" ui-button-icon-primary ui-icon ui-icon-seek-next"></span></button>
+		</div>
+	</div>
+
+<div id="buttonContainer">
+	
+		<button id="prevPolyhedronIn" class="prevPolyhedron nav-overlay-button  infront ui-button ui-widget" role="button" aria-disabled="false" title="Previous Model">
+			<i class=" nav-overlay-icon infront  icon-double-angle-left  icon-3x "></i>
+		</button>
+
+		<button id="nextPolyhedronIn" class="nextPolyhedron nav-overlay-button  infront ui-button ui-widget" role="button" aria-disabled="false" title="Next Model">
+			<i class=" nav-overlay-icon infront icon-double-angle-right icon-3x"></i>
+		</button>
+	
+	
+	
+		<button id="prevTextureIn" class="prevTexture nav-overlay-button infront ui-button ui-widget" role="button" aria-disabled="false" title="Previous Texture">
+			<i class=" nav-overlay-icon  icon-circle-arrow-left  icon-3x"></i>
+		</button>
+
+		<button id="nextTextureIn" class="nextTexture nav-overlay-button nextTexture infront ui-button ui-widget" role="button" aria-disabled="false" title="Next Texture">
+			<i class=" nav-overlay-icon infront infront icon-circle-arrow-right icon-3x  "></i>
+		</button>
+
+		<button id="lanternLink" class="nav-overlay-button infront ui-button ui-widget" role="button" aria-disabled="false" title="View Lantern in Webstore">
+			<i class=" nav-overlay-icon infront icon-lightbulb icon-2x "></i>
+		</button>
+
+		<button id="craftLink" class="nav-overlay-button infront ui-button ui-widget" role="button" aria-disabled="false" title="View Craft Kit in Webstore">
+			<i class=" nav-overlay-icon infront icon-cut icon-2x "></i>
+		</button>
+
+
+		<div id="alert"></div>	
+</div>
+
+<!-- ------------------------------------------------------------ -->
+
+
+
+<div id="ThreeJS" style="position: absolute; left:0px; top:0px"></div>
+<script>
+/*
+	The Playful Geometer's 3D Model browser using Three.js and Django Restful backend
+	Author: Justin Barca <justinbarca@gmail.com>
+		
+	Django site:
+	>>code: https://github.com/justin-hackin/playful-geometer-site
+	>>front-end (experimental): http://gentle-escarpment-8159.herokuapp.com
+	
+	A big thanks to Lee Stemkoski for his Three.js example.  This app started from: http://stemkoski.github.io/Three.js/Model.html
+*/
+
+// MAIN
+$(function()
+{
+
+	$(".infoDialog").dialog({ width: 600 });	
+	$(".prevTexture")
+	.click( 
+		function() 
+		{ 
+			prevTexture();
+		});
+
+	$(".nextTexture")
+	.click( 
+		function() 
+		{ 
+			nextTexture();
+		});
+
+	$(".prevPolyhedron")
+	.click( 
+		function() 
+		{ 
+			prevPolyhedron();
+		});
+
+	$(".nextPolyhedron")
+	.click( 
+		function() 
+		{ 
+			nextPolyhedron();
+		});
+
+	$("#polyhedronChoices")
+	.change(function()
+	{
+		polyhedronIndex = parseInt($(this).val());
+		changePolyhedronFocus();	
+	});
+
+	$("#textureChoices")
+	.change(function()
+	{
+		textureIndex[polyhedronIndex] = parseInt($(this).val());
+		updateTexture();	
+	});
+	$("select").selectBoxIt({
+
+    // Uses the jQueryUI theme for the drop down
+    theme: "jqueryui"
+
+  });
+	
+	$('#craftLink').click(function() {
+   		window.open("http://cosmic-spacecrafts.net/store/product-info.php?pid"+ textureData[polyhedronIndex][textureIndex[polyhedronIndex]].craftkit_id + ".html");
+     });
+
+	$('#lanternLink').click(function() {
+   		window.open("http://cosmic-spacecrafts.net/store/product-info.php?pid"+ textureData[polyhedronIndex][textureIndex[polyhedronIndex]].lantern_id + ".html");
+     });
+     
+    
+});
+
+// Solves negative modulo JavaScript bug
+Number.prototype.mod = function(n) {
+	return ((this%n)+n)%n;
+}
+
+function nextPolyhedron()
+{
+	polyhedronIndex = (polyhedronIndex-1).mod(polyhedraDataLength);
+	$("select#polyhedronChoices").data("selectBox-selectBoxIt").selectOption(polyhedronIndex);
+	
+}
+function prevPolyhedron()
+{
+	polyhedronIndex = (polyhedronIndex+1).mod(polyhedraDataLength);
+	$("select#polyhedronChoices").data("selectBox-selectBoxIt").selectOption(polyhedronIndex);
+	
+}
+
+function nextTexture()
+{
+	textureIndex[polyhedronIndex] = (textureIndex[polyhedronIndex]+1).mod(textureDataLength[polyhedronIndex]);
+	$("select#textureChoices").data("selectBox-selectBoxIt").selectOption(textureIndex[polyhedronIndex]);
+	updateTexture(true);
+}
+function prevTexture()
+{
+	textureIndex[polyhedronIndex] = (textureIndex[polyhedronIndex]-1).mod(textureDataLength[polyhedronIndex]);
+	$("select#textureChoices").data("selectBox-selectBoxIt").selectOption(textureIndex[polyhedronIndex]);
+	updateTexture(true);
+}
+
+
+
+
+// standard global variables
+var container, scene, camera, renderer, controls,  material, geometry;
+var keyboard = new THREEx.KeyboardState();
+var clock = new THREE.Clock();
+var polyhedronIndex = 0;
+var polyhedraData;
+var polyhedraDataLength;
+var textureIndex = [0,0,0,0,0];
+var textureDataLength = [];
+var textureData = [];
+var changeDown=false;
+var angularSpeed = 0.1; 
+var lastTime = 0;
+
+THREE.ImageUtils.crossOrigin = "";
+var authID = "AKIAJ3C3TA67XNGIDRDA";
+var authSecret = "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";
+
+function getAuthUrl(thisUrl, secs){
+	var authExpire= Math.floor(new Date().getTime() / 1000) + 10000;
+	var fullUrl = "/playful_geometer_site/model_browser/3d/"+thisUrl
+	var signature = generateSignature(fullUrl, authExpire, authSecret);
+	return generateSignedUrl(fullUrl, authExpire, authID,signature);
+}
+
+function getNonAuthUrl(thisUrl){
+	return "http://s3.amazonaws.com/playful_geometer_site/model_browser/3d/"+thisUrl
+}
+
+
+//Django restful api for Polyhedron and Texture data
+var apiLocation = "http://playful-geometer.herokuapp.com/api/";
+//var apiLocation = "http://127.0.0.1:8000/api/";
+//var apiLocation = "http://0.0.0.0:5000/api/";
+
+//stores 3D meshes for each polyhedron
+var displayedPolyhedra = [];
+//moves camera and models up
+var offsetY = 10;
+
+init();
+
+// <! %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+// FUNCTIONS 		
+function init() 
+{
+	// SCENE
+	scene = new THREE.Scene();
+	// CAMERA
+	var SCREEN_WIDTH = window.innerWidth, SCREEN_HEIGHT = window.innerHeight;
+	var VIEW_ANGLE = 45, ASPECT = SCREEN_WIDTH / SCREEN_HEIGHT, NEAR = 0.1, FAR = 20000;
+	camera = new THREE.PerspectiveCamera( VIEW_ANGLE, ASPECT, NEAR, FAR);
+	scene.add(camera);
+	camera.position.set(0,150+offsetY,0);
+	
+	// RENDERER
+	if ( Detector.webgl )
+		renderer = new THREE.WebGLRenderer( {antialias:true} );
+	else
+		window.location.replace("http://get.webgl.org/");
+	renderer.setSize(SCREEN_WIDTH, SCREEN_HEIGHT);
+	container = document.getElementById( 'ThreeJS' );
+	container.appendChild( renderer.domElement );
+	// EVENTS
+	THREEx.WindowResize(renderer, camera);
+	THREEx.FullScreen.bindKey({ charCode : 'm'.charCodeAt(0) });
+	// CONTROLS
+	controls = new THREE.OrbitControls( camera, renderer.domElement );
+	//controls.noZoom = true;
+	
+	// LIGHT
+	var light = new THREE.PointLight(0xffffff);
+	light.position.set(0,180,0);
+	light.intensity = 1.5;
+	scene.add(light);
+	
+	var global_light = new THREE.AmbientLight(0xffffff); // soft white light 
+	global_light.intensity = 5;
+	scene.add( global_light );
+	
+
+
+
+	// FLOOR
+
+
+	
+	// var jsonLoader = new THREE.JSONLoader();
+
+	// jsonLoader.load(getAuthUrl("models/floor_disk.js"), 
+	// 			function( geometry, materials)
+	// 			{
+	// 				var floorMaterial = new THREE.MeshFaceMaterial( materials );
+	// 				floorMaterial.side = THREE.DoubleSide;
+	// 				var floor = new THREE.Mesh( geometry, floorMaterial );
+	// 				floor.scale.set(80,80,80);
+	// 				scene.add(floor);
+					
+	// 			}, "http://s3.amazonaws.com/playful_geometer_site/model_browser/3d/images");
+
+
+	
+	
+	//Zome dome building 
+	var jsonLoader = new THREE.JSONLoader();
+	console.log("AUTH URL:"+getAuthUrl("models/zome_craft_disk.js"));
+	jsonLoader.load(getAuthUrl("models/zome_craft_disk.js"), 
+				function( geometry, materials)
+				{
+					var zomeMaterial = new THREE.MeshFaceMaterial( materials );
+					zomeMaterial.side = THREE.DoubleSide;
+
+					var zome = new THREE.Mesh( geometry, zomeMaterial );
+					zome.scale.set(20,20,20);
+					scene.add(zome);
+					
+				});
+
+	
+	loadPolyhedraData(initializePolyhedra);
+
+	var ambientLight = new THREE.AmbientLight(0x111111);
+	scene.add(ambientLight);
+}
+
+function loadPolyhedraData(callbackInitializePolyhedra)
+{
+	console.log("loading poly data");
+	$(document).ready(function(){  
+		$.getJSON(apiLocation+'polyhedrons/?format=json' , function(response){
+	       polyhedraData = response;
+	       polyhedraDataLength = polyhedraData.length;
+	       callbackInitializePolyhedra(loadPolyhedronTextures, 0);
+	    })
+	});
+}
+
+
+function initializePolyhedra(callbackLoadTextures, indAt)
+{
+	
+    var polySelectbox = $("select#polyhedronChoices").selectBoxIt().data("selectBox-selectBoxIt");
+    // Updates the showEffect option
+    polySelectbox.add([{val:indAt, text:polyhedraData[indAt].name}]);
+
+	console.log("loading poly models " + indAt );
+	var jsonLoader = new THREE.JSONLoader();
+	jsonLoader.load(getAuthUrl("models/" + polyhedraData[indAt].slug + ".js"), 
+				function(geometry, materials)
+				{
+					addModelToScene(geometry, materials, indAt);
+				}, "texture");
+	
+}
+
+
+function addModelToScene(geometry, materials,  indAt ) 
+{
+	
+	material = new THREE.MeshFaceMaterial(materials);
+	displayedPolyhedra[indAt] = new THREE.Mesh( geometry, material );
+	displayedPolyhedra[indAt].scale.set(20,20,20);
+	displayedPolyhedra[indAt].translateY( 80 + offsetY );
+	displayedPolyhedra[indAt].translateX(150);
+	var position = displayedPolyhedra[indAt].position;
+
+	var axis = new THREE.Vector3( 0, 1, 0 );
+	var angle = Math.PI*2*(indAt/polyhedraDataLength) ;
+	var matrix = new THREE.Matrix4().makeRotationAxis( axis, angle );
+	position.applyMatrix4( matrix );
+	displayedPolyhedra[indAt].position = position;
+	
+	scene.add( displayedPolyhedra[indAt] );
+	//console.log("initialized: "+polyhedraData[indAt].name )
+
+	if (indAt < polyhedraDataLength-1)
+	{
+		initializePolyhedra(loadPolyhedronTextures,	indAt+1);
+	}else{
+		loadPolyhedronTextures(changePolyhedronFocus, 0);
+		
+	}
+
+	
+	
+}
+
+function getRandomInt (min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+
+function loadPolyhedronTextures(callbackPolyFocus, indAt)
+{
+	$.getJSON(apiLocation+'texture_implementations/?format=json&texture_line_slug=cosmic-spacecrafts&polyhedron_slug='+polyhedraData[indAt].slug ,
+			function(response){
+				textureData[indAt]=response;
+				console.log("************texturelload i:"+ indAt);
+				textureDataLength[indAt]=textureData[indAt].length;
+		    	polyhedronIndex = indAt;
+		    	textureIndex[polyhedronIndex] = getRandomInt(0,textureDataLength[indAt]-1);
+				
+	}).done(
+		function () 
+			{
+				updateTexture(true);
+
+				console.log(">>>>>>>>>>>>>>>>>>texturelload i:"+ indAt);
+				if (indAt == polyhedraDataLength -1)
+				{
+					
+					polyhedronIndex = 0;
+					$(".modal").css({"display":"none"});
+					
+					
+					animate();
+					callbackPolyFocus();
+				}else{
+					loadPolyhedronTextures(callbackPolyFocus, indAt+1);
+				}
+			});
+		
+}
+
+
+ 
+
+function updateTextureList()
+{
+	displayAlert(polyhedraData[polyhedronIndex].name);
+	$("select#textureChoices").empty();
+	var textureSelectbox = $("select#textureChoices").selectBoxIt().data("selectBox-selectBoxIt");
+	var itemsList = [];   
+	for (var i = 0; i<textureDataLength[polyhedronIndex]; i++)
+	{
+		itemsList.push({val:i, text:textureData[polyhedronIndex][i].texture});
+	}
+	textureSelectbox.add(itemsList);
+	
+	
+}
+
+function updateTexture(isFirst)
+{
+	
+	console.log("updated Texture");
+	var textureFile = textureData[polyhedronIndex][textureIndex[polyhedronIndex]].texture_slug.replace(/-/g, "_")+ ".png";
+	var textureLine = textureData[polyhedronIndex][textureIndex[polyhedronIndex]].texture_line;
+	var textureUrl = getAuthUrl( "images/0~Faces~0/" + escape(polyhedraData[polyhedronIndex].name) + "/"+ escape(textureLine) + "/" + textureFile);
+	console.log("Texture:"+textureUrl);
+	var map = THREE.ImageUtils.loadTexture(textureUrl);
+	//var map = document.createElement( 'img' );
+	//map.src = textureUrl;
+	//var map = THREE.ImageUtils.loadTexture("/static/0~Faces~0/" + polyhedraData[polyhedronIndex].name + "/"+ textureLine + "/" + textureFile);
+	
+	
+	map.crossOrigin = '';
+	map.needsUpdate = true;
+	displayedPolyhedra[polyhedronIndex].material.materials[0].map = map;
+
+	if(! isFirst ){
+		displayAlert(textureData[polyhedronIndex][textureIndex[polyhedronIndex]].texture);
+	}
+
+}
+
+function changePolyhedronFocus()
+{
+
+	var target = displayedPolyhedra[polyhedronIndex].position;
+	var tweenCam = new TWEEN.Tween( controls.target ).to( {
+	    x: target.x,
+	    y: target.y,
+	    z: target.z }, 1000 )
+  	.easing( TWEEN.Easing.Exponential.EaseInOut).onComplete(updateTextureList);
+  	//tweenCam.chain(updateTextureList);
+  	tweenCam.start();
+  	
+  	
+}
+
+
+//Displays model/texture upon change
+function displayAlert(displayText){
+	$("#alert").stop(true, true).text(displayText);
+	$("#alert").css({
+        position:'absolute',
+        left: ($(window).width() - $("#alert").outerWidth())/2,
+        top: ($(window).height() - $("#alert").outerHeight())/2,
+        visibility:"visible"
+    }).animate(
+    {        
+        opacity: 1
+
+       
+    }, {
+        duration: 500,
+        easing: "easeOutSine"
+    }).animate(
+    {
+        opacity:-1,
+        
+    }, {
+        duration: 500,
+        easing: "easeInSine"
+    }) ;
+}
+
+function animate() 
+{
+    var time = (new Date()).getTime();
+    var timeDiff = time - lastTime;
+    var angleChange = angularSpeed * timeDiff * 2 * Math.PI / 1000;
+    displayedPolyhedra[polyhedronIndex].rotation.y -= angleChange;
+    lastTime = time;
+ 	TWEEN.update();
+ 	update();
+ 	render();		
+	requestAnimationFrame( animate );
+	
+}
+
+function update()
+{
+	controls.update();
+	
+}
+
+function render() 
+{
+	
+	renderer.render( scene, camera );
+}
+
+</script>
+
+
+<div class="modal"></div>
+</body>
+</html>

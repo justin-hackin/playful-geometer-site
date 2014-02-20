@@ -1,0 +1,16 @@
+{% load static from staticfiles %}
+
+<strong>Polyhedrons</strong>
+
+<ul>
+{% for polyhedron in polyhedrons %}
+
+	<li><a href="{% url 'model_browser:byline_texture_implementation_view' texture_line_slug=texture_line_slug polyhedron_slug=polyhedron.slug  %}"><img src = "{% static polyhedron.url_preview_image_small %}"/> </a> <br>{{ polyhedron.name }}</li>
+	
+
+{% endfor %}
+</ul>
+
+
+
+

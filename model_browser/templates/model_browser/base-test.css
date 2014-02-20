@@ -1,0 +1,145 @@
+body 
+{
+	font-family: Monospace;
+	font-weight: bold;
+	background-color: #222222;
+	margin: 0px;
+	overflow: hidden;
+}
+#toolbar{
+    display:block;
+}
+
+.barTitle{
+    font-size:1em;
+    margin-top:5px;
+    margin-bottom:5px;
+    width:100%;
+    text-align: center;
+}
+ 
+
+
+.modal {
+    display:    block;
+    position:   fixed;
+    z-index:    200000;
+    top:        0;
+    left:       0;
+    height:     100%;
+    width:      100%;
+    background: rgba( 255, 255, 255, .8 ) 
+                url('../images/ajax-loader.gif') 
+                50% 50% 
+                no-repeat;
+}
+
+#textureChoices, #polyhedronChoices{
+    z-index:4;
+}
+
+/*overlaid buttons*/
+#buttonContainer{
+    position:fixed;
+    display:block;
+    width:100%;
+    height:100%;
+    z-index: 1;
+    visibility: hidden;
+}
+
+
+
+#lanternLink{
+    position:absolute;  
+    width:36px;
+    top:0;
+    right:50%;
+    margin-left:-100px;
+    
+}
+  
+#craftLink{
+    position:absolute;  
+    width:36px;
+    top:0;
+    left:50%;
+    margin-right:-100px;
+ 
+}
+
+/*bottom menu button control*/
+
+.buttonGroup{
+    z-index:99;
+    position:absolute;
+    bottom:0;
+ 
+}
+
+
+
+
+/*displays model/texture*/
+#alert{
+    position:absolute;
+    color:white;
+    font-weight: bold;
+    font-size: 24px;
+    text-align: center;
+    opacity:0 ;
+    
+}
+
+select{
+    z-index:5;
+}
+
+.infront {
+	z-index:2;
+	position:relative;
+}
+.ui-button{
+	margin:0px;
+	z-index:2;
+}
+
+.ui-icon, .icon{
+	z-index:2;
+	float:left;
+	margin:7px;
+    padding:0;
+	vertical-align: center;
+
+}
+
+
+
+.nav-overlay-button {
+    position:absolute;      
+    top:0px;
+    background:none;
+    margin:5px;
+    border:none;
+    z-index: 2;
+    visibility: visible;
+}
+
+.nav-overlay-button>.nav-overlay-icon {
+    color:white;
+    opacity:0.6;
+    z-index: 2;
+    visibility: inherit;
+
+}
+
+.nav-overlay-button>.nav-overlay-icon:hover {
+    opacity:1;
+
+}
+
+.bar-headding{
+    font-weight: bold;
+    font-size: 14px;
+    vertical-align: center;
+}

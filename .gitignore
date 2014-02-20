@@ -1,0 +1,11 @@
+venv
+*.pyc
+staticfiles
+*.class
+*.pyc
+*.pyo
+model_browser/static/3d
+model_browser/static/model_browser/app/css
+model_browser/static/model_browser/app/fonts
+model_browser/static/model_browser/app/js
+model_browser/static/model_browser/images
